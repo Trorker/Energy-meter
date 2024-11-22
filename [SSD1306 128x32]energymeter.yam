@@ -62,34 +62,34 @@ i2c:
 font:
   - file:
       type: gfonts
-      family: Baloo+Bhaijaan+2
+      family: Roboto
       weight: 500
-    id: baloo_18_500
-    size: 18
+    id: roboto_10_500
+    size: 10
  
   - file:
       type: gfonts
-      family: Baloo+Bhaijaan+2
+      family: Roboto
       weight: 700
-    id: baloo_32_700
-    size: 32
+    id: roboto_12_700
+    size: 12
   
   - file:
       type: gfonts
-      family: Baloo+Bhaijaan+2
+      family: Roboto
       weight: 700
-    id: baloo_18_700
+    id: roboto_18_700
     size: 18
  
   - file: "gfonts://Material+Symbols+Outlined"
-    id: icons_18
-    size: 18
-    glyphs: ["\ue63e", "\ue648"] # mdi-wifi, mdi-wifi-off
-
-  - file: "gfonts://Material+Symbols+Outlined"
     id: icons_16
     size: 16
-    glyphs: ["\ue63e", "\ue648"] # mdi-wifi, mdi-wifi-off
+    glyphs: ["\ue63e", "\ue648", "\uea0b", "\uec1b", "\uf161"] # mdi-wifi, mdi-wifi-off, mdi-bolt, ndi-electric_meter, mdi-energy_program_time_used
+
+  - file: "gfonts://Material+Symbols+Outlined"
+    id: icons_14
+    size: 14
+    glyphs: ["\ue63e", "\ue648", "\uea0b", "\uec1b", "\uf161"] # mdi-wifi, mdi-wifi-off, mdi-bolt, ndi-electric_meter, mdi-energy_program_time_used
  
 display:
   - platform: ssd1306_i2c
@@ -99,14 +99,26 @@ display:
     rotation: 90°
     lambda: |-
       // Syntax is always: it.print(<x>, <y>, <font>, [color=COLOR_ON], [align=TextAlign::TOP_LEFT], <text>);
-      if(id(connection_status).state == 1) {
-        it.print(it.get_width()/2, 0, id(icons_16), TextAlign::TOP_CENTER, "\ue63e");        
-      }
-      else {
-        it.print(it.get_width()/2, 0, id(icons_16), TextAlign::TOP_CENTER, "\ue648");
-      }
+      //if(id(connection_status).state == 1) {
+      //  it.print(it.get_width()/2, 0, id(icons_14), TextAlign::TOP_CENTER, "\ue63e");        
+      //}
+      //else {
+      //  it.print(it.get_width()/2, 0, id(icons_14), TextAlign::TOP_CENTER, "\ue648");
+      //}
 
+      // Shorthand:
+      it.printf(it.get_width()/2, 0, id(icons_14), TextAlign::TOP_CENTER, id(connection_status).state == 1 ? "\ue63e" : "\ue648");
+      
       it.line(0, 18, it.get_width(), 18);
+
+      it.print(it.get_width()/2, 20, id(icons_16), TextAlign::TOP_CENTER, "\uea0b");
+
+      it.printf(it.get_width()/2, 38, id(roboto_10_500), TextAlign::TOP_CENTER, "%.1f W", id(power2).state);
+
+      it.printf(it.get_width()/2, 48, id(roboto_10_500), TextAlign::TOP_CENTER, "%.1f V", id(voltage2).state);
+
+      it.printf(it.get_width()/2, 58, id(roboto_10_500), TextAlign::TOP_CENTER, "%.1f A", id(current2).state);
+
  
  
 binary_sensor:
