@@ -77,7 +77,7 @@ font:
   - file: "gfonts://Material+Symbols+Outlined"
     id: icons_14
     size: 13
-    glyphs: ["\ue63e", "\ue648", "\uea0b", "\uec1b", "\uf161"] # mdi-wifi, mdi-wifi-off, mdi-bolt, ndi-electric_meter, mdi-energy_program_time_used
+    glyphs: ["\ue63e", "\ue648", "\uec1c", "\uec1b", "\uf161", "\uec1a"] # mdi-wifi, mdi-wifi-off, mdi-electric_bolt, ndi-electric_meter, mdi-energy_program_time_used, mdi-energy_savings_leaf
 
   - file: "gfonts://Material+Symbols+Outlined"
     id: icons_9
@@ -93,11 +93,15 @@ display:
     lambda: |-
       // Syntax is always: it.print(<x>, <y>, <font>, [color=COLOR_ON], [align=TextAlign::TOP_LEFT], <text>);
 
+      // Dati da visualizzare
+      float potenza = 3100.0;   // esempio di valore di potenza
+      float corrente = 5.0;    // esempio di valore di corrente
+      float tensione = 220.0;   // esempio di valore di tensione
+      
       //NavBar
       it.line(0, 16, it.get_width(), 16);
-      //it.printf(it.get_width()/2, 0, id(icons_14), TextAlign::TOP_CENTER, id(connection_status).state == 1 ? "\ue63e" : "\ue648");
       it.printf(it.get_width(), 0, id(icons_14), TextAlign::TOP_RIGHT, id(connection_status).state == 1 ? "\ue63e" : "\ue648"); // Wi-Fi
-      it.printf(0, 0, id(icons_14), TextAlign::TOP_LEFT, id(connection_status).state == 1 ? "\uea0b" : "\uf161"); // Usage
+      it.printf(0, 0, id(icons_14), TextAlign::TOP_LEFT, potenza > 500 ? "\uec1c" : "\uec1a"); // Usage
 
       //Footer
       it.line(0, it.get_height()-14, it.get_width(), it.get_height()-14);
@@ -108,11 +112,6 @@ display:
         const char* icon = (id(page) == i) ? "\ue837" : "\ue836";  // Icona attiva o inattiva
         it.printf(x, y, id(icons_9), TextAlign::BOTTOM_CENTER, icon);
       }
-
-      // Dati da visualizzare
-      float potenza = 3100.0;   // esempio di valore di potenza
-      float corrente = 5.0;    // esempio di valore di corrente
-      float tensione = 220.0;   // esempio di valore di tensione
 
       // Ruota il display di 0 gradi
       it.set_rotation(DISPLAY_ROTATION_0_DEGREES);
@@ -138,7 +137,6 @@ display:
       // Ruota il display di 90 gradi
       it.set_rotation(DISPLAY_ROTATION_90_DEGREES); 
 
-
 globals:
   - id: page
     type: int
@@ -152,13 +150,25 @@ interval:
     then:
       - lambda: |-
           id(page) = (id(page) % id(sections)) + 1;
+          id(oled).update();
 
 binary_sensor:
 # Connection status
   - platform: status
     name: "Status"
     id: connection_status
- 
+
+# Configura il pulsante
+  - platform: gpio
+    pin:
+      number: GPIO12  # Pin del pulsante
+      mode: INPUT_PULLUP
+    name: "Pulsante Cambia Pagina"
+    on_press:
+      - lambda: |-
+          id(page) = (id(page) % id(sections)) + 1;
+          id(oled).update();
+
 sensor:
 # First channel voltage
   - platform: modbus_controller
