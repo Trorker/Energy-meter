@@ -64,32 +64,25 @@ font:
       type: gfonts
       family: Roboto
       weight: 500
-    id: roboto_10_500
-    size: 10
+    id: roboto_20_500
+    size: 20
  
   - file:
       type: gfonts
       family: Roboto
-      weight: 700
-    id: roboto_12_700
-    size: 12
-  
-  - file:
-      type: gfonts
-      family: Roboto
-      weight: 700
-    id: roboto_18_700
-    size: 18
- 
-  - file: "gfonts://Material+Symbols+Outlined"
-    id: icons_16
+      weight: 500
+    id: roboto_16_500
     size: 16
-    glyphs: ["\ue63e", "\ue648", "\uea0b", "\uec1b", "\uf161"] # mdi-wifi, mdi-wifi-off, mdi-bolt, ndi-electric_meter, mdi-energy_program_time_used
 
   - file: "gfonts://Material+Symbols+Outlined"
     id: icons_14
-    size: 14
+    size: 13
     glyphs: ["\ue63e", "\ue648", "\uea0b", "\uec1b", "\uf161"] # mdi-wifi, mdi-wifi-off, mdi-bolt, ndi-electric_meter, mdi-energy_program_time_used
+
+  - file: "gfonts://Material+Symbols+Outlined"
+    id: icons_9
+    size: 9
+    glyphs: ["\ue836", "\ue837"] # mdi-radio_button_unchecked, mdi-radio_button_checked
  
 display:
   - platform: ssd1306_i2c
@@ -99,28 +92,67 @@ display:
     rotation: 90°
     lambda: |-
       // Syntax is always: it.print(<x>, <y>, <font>, [color=COLOR_ON], [align=TextAlign::TOP_LEFT], <text>);
-      //if(id(connection_status).state == 1) {
-      //  it.print(it.get_width()/2, 0, id(icons_14), TextAlign::TOP_CENTER, "\ue63e");        
-      //}
-      //else {
-      //  it.print(it.get_width()/2, 0, id(icons_14), TextAlign::TOP_CENTER, "\ue648");
-      //}
 
-      // Shorthand:
-      it.printf(it.get_width()/2, 0, id(icons_14), TextAlign::TOP_CENTER, id(connection_status).state == 1 ? "\ue63e" : "\ue648");
-      
-      it.line(0, 18, it.get_width(), 18);
+      //NavBar
+      it.line(0, 16, it.get_width(), 16);
+      //it.printf(it.get_width()/2, 0, id(icons_14), TextAlign::TOP_CENTER, id(connection_status).state == 1 ? "\ue63e" : "\ue648");
+      it.printf(it.get_width(), 0, id(icons_14), TextAlign::TOP_RIGHT, id(connection_status).state == 1 ? "\ue63e" : "\ue648"); // Wi-Fi
+      it.printf(0, 0, id(icons_14), TextAlign::TOP_LEFT, id(connection_status).state == 1 ? "\uea0b" : "\uf161"); // Usage
 
-      it.print(it.get_width()/2, 20, id(icons_16), TextAlign::TOP_CENTER, "\uea0b");
+      //Footer
+      it.line(0, it.get_height()-14, it.get_width(), it.get_height()-14);
+      const int y = it.get_height();  // Altezza del display (basso)
+      const int section_width = it.get_width() / id(sections);  // Larghezza di ogni sezione
+      for (int i = 1; i <= id(sections); i++) {// Disegna i tre puntini
+        int x = (section_width * i) - (section_width / 2);  // Centro di ogni sezione
+        const char* icon = (id(page) == i) ? "\ue837" : "\ue836";  // Icona attiva o inattiva
+        it.printf(x, y, id(icons_9), TextAlign::BOTTOM_CENTER, icon);
+      }
 
-      it.printf(it.get_width()/2, 38, id(roboto_10_500), TextAlign::TOP_CENTER, "%.1f W", id(power2).state);
+      // Dati da visualizzare
+      float potenza = 3100.0;   // esempio di valore di potenza
+      float corrente = 5.0;    // esempio di valore di corrente
+      float tensione = 220.0;   // esempio di valore di tensione
 
-      it.printf(it.get_width()/2, 48, id(roboto_10_500), TextAlign::TOP_CENTER, "%.1f V", id(voltage2).state);
+      // Ruota il display di 0 gradi
+      it.set_rotation(DISPLAY_ROTATION_0_DEGREES);
 
-      it.printf(it.get_width()/2, 58, id(roboto_10_500), TextAlign::TOP_CENTER, "%.1f A", id(current2).state);
+      // Posizione centrale del display
+      const int center_x = it.get_width() / 2;
+      const int center_y = it.get_height() / 2;
 
- 
- 
+      // Pagine
+      switch (id(page)) {
+        case 1: // Pagina 1
+          it.printf(center_x, center_y, id(roboto_20_500), TextAlign::CENTER, "%.1f W", potenza); // Potenza
+          break;
+        case 2: // Pagina 2
+          it.printf(center_x, center_y , id(roboto_16_500), TextAlign::BOTTOM_CENTER, "%.1f V", tensione);  // Tensione
+          it.printf(center_x, center_y, id(roboto_16_500), TextAlign::TOP_CENTER, "%.1f A", corrente);  // Corrente
+          break;
+        case 3: // Pagina 3
+          it.printf(center_x, center_y, id(icons_14), TextAlign::CENTER, "\uf161");
+          break;
+      }
+
+      // Ruota il display di 90 gradi
+      it.set_rotation(DISPLAY_ROTATION_90_DEGREES); 
+
+
+globals:
+  - id: page
+    type: int
+    initial_value: "1"
+  - id: sections
+    type: int
+    initial_value: "3"
+
+interval:
+  - interval: 5s
+    then:
+      - lambda: |-
+          id(page) = (id(page) % id(sections)) + 1;
+
 binary_sensor:
 # Connection status
   - platform: status
