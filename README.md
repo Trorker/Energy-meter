@@ -10,6 +10,7 @@
 - **ESP32 Wemos D1 mini board** [(link here)](https://it.aliexpress.com/item/32858054775.html?spm=a2g0o.order_list.order_list_main.6.2312369677kxuG&gatewayAdapt=glo2ita)
 - **Display OLED I2C 0.91” I2C SSD1306 128x32** [(link here)](https://it.aliexpress.com/item/1005006365845676.html?spm=a2g0o.order_list.order_list_main.70.16373696NvlZRz&gatewayAdapt=glo2ita)
 - **AC-DC 5V-700mA** [(link here)](https://a.aliexpress.com/_EIIHYRb)
+- **Relè SRD-05VDC-SL-C, 5V DC250V AC 10A** [(link here)]([https://a.aliexpress.com/_EIIHYRb](https://it.aliexpress.com/item/1005006170454498.html?spm=a2g0o.order_list.order_list_main.237.21ef3696so5JRU&gatewayAdapt=glo2ita))
 
 
 
@@ -18,6 +19,9 @@
 
 ## Display OLED I2C 0.91” I2C SSD1306 128x32
 ![ESP32 Wemos D1 mini board](https://raw.githubusercontent.com/Trorker/Energy-meter/refs/heads/main/image/SSD1306%20128x32.png)
+
+## Relè SRD-05VDC-SL-C, 5V DC250V AC 10A
+![ESP32 Wemos D1 mini board](https://raw.githubusercontent.com/Trorker/Energy-meter/refs/heads/main/image/Relè%20SRD-05VDC-SL-C%205V%20DC250V%20AC%2010A.png)
 
 ## License
 
