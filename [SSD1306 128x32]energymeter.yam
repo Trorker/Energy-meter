@@ -80,6 +80,11 @@ font:
     glyphs: ["\ue63e", "\ue648", "\uec1c", "\uec1b", "\uf161", "\uec1a"] # mdi-wifi, mdi-wifi-off, mdi-electric_bolt, ndi-electric_meter, mdi-energy_program_time_used, mdi-energy_savings_leaf
 
   - file: "gfonts://Material+Symbols+Outlined"
+    id: icons_13
+    size: 13
+    glyphs: ["\ue4ca", "\ue4d9", "\ue63e", "\ue2bd", "\ue2c1",] # wifi_1_bar, wifi_2_bar, wifi, cloud, cloud_off
+
+  - file: "gfonts://Material+Symbols+Outlined"
     id: icons_9
     size: 9
     glyphs: ["\ue836", "\ue837"] # mdi-radio_button_unchecked, mdi-radio_button_checked
@@ -98,15 +103,17 @@ display:
       float corrente = 5.0;    // esempio di valore di corrente
       float tensione = 220.0;   // esempio di valore di tensione
 
-      it.rectangle(0, 0, it.get_width(), it.get_height());
-      
-      //NavBar
       it.line(0, 16, it.get_width(), 16);
-      it.printf(it.get_width() - 2, 0, id(icons_14), TextAlign::TOP_RIGHT, id(connection_status).state == 1 ? "\ue63e" : "\ue648"); // Wi-Fi
-      it.printf(2, 0, id(icons_14), TextAlign::TOP_LEFT, potenza > 500 ? "\uec1c" : "\uec1a"); // Usage
+      it.line(0, it.get_height()-14, it.get_width(), it.get_height()-14);
+      it.rectangle(0, 0, it.get_width(), it.get_height());
+
+      //NavBar
+      it.printf(it.get_width() - 2, 0, id(icons_13), TextAlign::TOP_RIGHT, id(connection_status).state == 1 ? "\ue2bd" : "\ue2c1"); // Connect Status
+      int wifi_rssi = id(wifi_strength).state;
+      const char* wifi_icon = wifi_rssi > -50 ? "\ue63e" : (wifi_rssi > -70 ? "\ue4d9" : "\ue4ca"); // Wi-Fi Signal
+      it.printf(0, 0, id(icons_13), TextAlign::TOP_LEFT, wifi_icon);
 
       //Footer
-      it.line(0, it.get_height()-14, it.get_width(), it.get_height()-14);
       const int y = it.get_height();  // Altezza del display (basso)
       const int section_width = it.get_width() / id(sections);  // Larghezza di ogni sezione
       for (int i = 1; i <= id(sections); i++) {// Disegna i tre puntini
@@ -160,7 +167,7 @@ binary_sensor:
     name: "Status"
     id: connection_status
 
-# Configura il pulsante
+    # Configura il pulsante
   - platform: gpio
     pin:
       number: GPIO12  # Pin del pulsante
@@ -171,7 +178,19 @@ binary_sensor:
           id(page) = (id(page) % id(sections)) + 1;
           id(oled).update();
 
+# Example configuration entry
+switch:
+  - platform: gpio
+    pin: GPIO14
+    name: "Living Room Dehumidifier"
+
 sensor:
+  - platform: wifi_signal
+    name: "Wi-Fi Signal Strength"
+    id: wifi_strength
+    update_interval: 10s
+
+
 # First channel voltage
   - platform: modbus_controller
     modbus_controller_id: jsymk
