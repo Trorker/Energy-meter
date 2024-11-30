@@ -15,7 +15,7 @@
 
 
 ## ESP32 Wemos D1 mini board
-![ESP32 Wemos D1 mini board](https://raw.githubusercontent.com/Trorker/Energy-meter/refs/heads/main/image/ESP8266-WeMos-D1-Mini-pinout-gpio-pin.webp =250x250)
+![ESP32 Wemos D1 mini board](https://raw.githubusercontent.com/Trorker/Energy-meter/refs/heads/main/image/ESP8266-WeMos-D1-Mini-pinout-gpio-pin.webp)
 
 ## Display OLED I2C 0.91” I2C SSD1306 128x32
 ![ESP32 Wemos D1 mini board](https://raw.githubusercontent.com/Trorker/Energy-meter/refs/heads/main/image/SSD1306%20128x32.png)
