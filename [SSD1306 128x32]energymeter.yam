@@ -75,9 +75,9 @@ font:
     size: 16
 
   - file: "gfonts://Material+Symbols+Outlined"
-    id: icons_14
-    size: 13
-    glyphs: ["\ue63e", "\ue648", "\uec1c", "\uec1b", "\uf161", "\uec1a"] # mdi-wifi, mdi-wifi-off, mdi-electric_bolt, ndi-electric_meter, mdi-energy_program_time_used, mdi-energy_savings_leaf
+    id: icons_15
+    size: 15
+    glyphs: ["\ue63e", "\ue648", "\uec1c", "\uec1b", "\uf161", "\uec1a", "\ue9f6", "\ue9f5"] # mdi-wifi, mdi-wifi-off, mdi-electric_bolt, ndi-electric_meter, mdi-energy_program_time_used, mdi-energy_savings_leaf
 
   - file: "gfonts://Material+Symbols+Outlined"
     id: icons_13
@@ -140,7 +140,8 @@ display:
           it.printf(center_x, center_y - 2, id(roboto_16_500), TextAlign::TOP_CENTER, "%.1f A", corrente);  // Corrente
           break;
         case 3: // Pagina 3
-          it.printf(center_x, center_y, id(icons_14), TextAlign::CENTER, "\uf161");
+          it.printf(center_x, center_y, id(icons_15), TextAlign::CENTER, id(relay_control).state == 1 ? "\ue9f6" : "\ue9f5");
+          //it.printf(center_x, center_y, id(icons_15), TextAlign::CENTER, "\uf161");
           //id(relay_control).turn_off();
           break;
       }
@@ -151,7 +152,7 @@ display:
 globals:
   - id: page
     type: int
-    initial_value: "1"
+    initial_value: "3" # default 1
   - id: sections
     type: int
     initial_value: "3"
@@ -160,8 +161,9 @@ interval:
   - interval: 5s
     then:
       - lambda: |-
-          id(page) = (id(page) % id(sections)) + 1;
+          //id(page) = (id(page) % id(sections)) + 1;
           id(oled).update();
+          //id(relay_control).toggle();
 
 binary_sensor:
 # Connection status
@@ -179,6 +181,15 @@ binary_sensor:
       - lambda: |-
           id(page) = (id(page) % id(sections)) + 1;
           id(oled).update();
+  # Configura il pulsante
+  - platform: gpio
+    pin:
+      number: GPIO14  # Pin del pulsante
+      mode: INPUT_PULLUP
+    name: "Pulsante Cambia Pagina"
+    on_press:
+      - lambda: |-
+          id(relay_control).toggle();
 
 # Example configuration entry
 switch:
