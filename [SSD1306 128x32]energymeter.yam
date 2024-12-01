@@ -186,7 +186,7 @@ switch:
     pin:
       number: GPIO13
       inverted: true
-    name: "Relay Control"
+    name: "Relay"
     id: relay_control
 
 sensor:
