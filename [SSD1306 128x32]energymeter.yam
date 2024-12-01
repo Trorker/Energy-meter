@@ -111,7 +111,7 @@ display:
       it.printf(it.get_width() - 2, 0, id(icons_13), TextAlign::TOP_RIGHT, id(connection_status).state == 1 ? "\ue2bd" : "\ue2c1"); // Connect Status
       int wifi_rssi = id(wifi_strength).state;
       const char* wifi_icon = wifi_rssi > -50 ? "\ue63e" : (wifi_rssi > -70 ? "\ue4d9" : "\ue4ca"); // Wi-Fi Signal
-      it.printf(0, 0, id(icons_13), TextAlign::TOP_LEFT, wifi_icon);
+      it.printf(2, 0, id(icons_13), TextAlign::TOP_LEFT, wifi_icon);
 
       //Footer
       const int y = it.get_height();  // Altezza del display (basso)
@@ -133,6 +133,7 @@ display:
       switch (id(page)) {
         case 1: // Pagina 1
           it.printf(center_x, center_y, id(roboto_20_500), TextAlign::CENTER, "%.1f W", potenza); // Potenza
+          //id(relay_control).turn_on();
           break;
         case 2: // Pagina 2
           it.printf(center_x, center_y + 2 , id(roboto_16_500), TextAlign::BOTTOM_CENTER, "%.1f V", tensione);  // Tensione
@@ -140,6 +141,7 @@ display:
           break;
         case 3: // Pagina 3
           it.printf(center_x, center_y, id(icons_14), TextAlign::CENTER, "\uf161");
+          //id(relay_control).turn_off();
           break;
       }
 
@@ -181,8 +183,11 @@ binary_sensor:
 # Example configuration entry
 switch:
   - platform: gpio
-    pin: GPIO14
-    name: "Living Room Dehumidifier"
+    pin:
+      number: GPIO13
+      inverted: true
+    name: "Relay Control"
+    id: relay_control
 
 sensor:
   - platform: wifi_signal
