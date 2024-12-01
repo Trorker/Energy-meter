@@ -7,6 +7,9 @@ esp8266:
 
 # Enable logging
 logger:
+  level: DEBUG
+  baud_rate: 0
+  esp8266_store_log_strings_in_flash: false
 
 # Enable Home Assistant API
 api:
@@ -94,7 +97,7 @@ display:
     model: "SSD1306 128x32" # model: "SSD1306 128x64"
     address: 0x3C
     id: oled
-    rotation: 90°
+    rotation: 270°
     lambda: |-
       // Syntax is always: it.print(<x>, <y>, <font>, [color=COLOR_ON], [align=TextAlign::TOP_LEFT], <text>);
 
@@ -123,7 +126,7 @@ display:
       }
 
       // Ruota il display di 0 gradi
-      it.set_rotation(DISPLAY_ROTATION_0_DEGREES);
+      it.set_rotation(DISPLAY_ROTATION_180_DEGREES);
 
       // Posizione centrale del display
       const int center_x = it.get_width() / 2;
@@ -132,12 +135,12 @@ display:
       // Pagine
       switch (id(page)) {
         case 1: // Pagina 1
-          it.printf(center_x, center_y, id(roboto_20_500), TextAlign::CENTER, "%.1f W", potenza); // Potenza
+          it.printf(center_x, center_y, id(roboto_20_500), TextAlign::CENTER, "%.1f W", id(power2).state); // Potenza
           //id(relay_control).turn_on();
           break;
         case 2: // Pagina 2
-          it.printf(center_x, center_y + 2 , id(roboto_16_500), TextAlign::BOTTOM_CENTER, "%.1f V", tensione);  // Tensione
-          it.printf(center_x, center_y - 2, id(roboto_16_500), TextAlign::TOP_CENTER, "%.1f A", corrente);  // Corrente
+          it.printf(center_x, center_y + 2 , id(roboto_16_500), TextAlign::BOTTOM_CENTER, "%.1f V", id(voltage2).state);  // Tensione
+          it.printf(center_x, center_y - 2, id(roboto_16_500), TextAlign::TOP_CENTER, "%.1f A", id(current2).state);  // Corrente
           break;
         case 3: // Pagina 3
           it.printf(center_x, center_y, id(icons_15), TextAlign::CENTER, id(relay_control).state == 1 ? "\ue9f6" : "\ue9f5");
@@ -147,7 +150,7 @@ display:
       }
 
       // Ruota il display di 90 gradi
-      it.set_rotation(DISPLAY_ROTATION_90_DEGREES); 
+      it.set_rotation(DISPLAY_ROTATION_270_DEGREES); 
 
 globals:
   - id: page
@@ -162,7 +165,7 @@ interval:
     then:
       - lambda: |-
           //id(page) = (id(page) % id(sections)) + 1;
-          id(oled).update();
+          //id(oled).update();
           //id(relay_control).toggle();
 
 binary_sensor:
