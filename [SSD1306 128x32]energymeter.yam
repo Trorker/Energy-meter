@@ -7,7 +7,7 @@ esp8266:
 
 # Enable logging
 logger:
-  level: DEBUG
+  level: WARN
   baud_rate: 0
   esp8266_store_log_strings_in_flash: false
 
@@ -99,13 +99,6 @@ display:
     id: oled
     rotation: 270°
     lambda: |-
-      // Syntax is always: it.print(<x>, <y>, <font>, [color=COLOR_ON], [align=TextAlign::TOP_LEFT], <text>);
-
-      // Dati da visualizzare
-      float potenza = 3100.0;   // esempio di valore di potenza
-      float corrente = 5.0;    // esempio di valore di corrente
-      float tensione = 220.0;   // esempio di valore di tensione
-
       it.line(0, 16, it.get_width(), 16);
       it.line(0, it.get_height()-14, it.get_width(), it.get_height()-14);
       it.rectangle(0, 0, it.get_width(), it.get_height());
@@ -155,18 +148,10 @@ display:
 globals:
   - id: page
     type: int
-    initial_value: "3" # default 1
+    initial_value: "1" # default 1
   - id: sections
     type: int
     initial_value: "3"
-
-interval:
-  - interval: 5s
-    then:
-      - lambda: |-
-          //id(page) = (id(page) % id(sections)) + 1;
-          //id(oled).update();
-          //id(relay_control).toggle();
 
 binary_sensor:
 # Connection status
@@ -174,7 +159,7 @@ binary_sensor:
     name: "Status"
     id: connection_status
 
-    # Configura il pulsante
+# Configura il pulsante
   - platform: gpio
     pin:
       number: GPIO12  # Pin del pulsante
@@ -193,6 +178,7 @@ binary_sensor:
     on_press:
       - lambda: |-
           id(relay_control).toggle();
+          id(oled).update();
 
 # Example configuration entry
 switch:
@@ -204,6 +190,7 @@ switch:
     id: relay_control
 
 sensor:
+# WI-FI Signal
   - platform: wifi_signal
     name: "Wi-Fi Signal Strength"
     id: wifi_strength
@@ -466,4 +453,3 @@ sensor:
       - multiply: 1
     register_count: 1
     response_size: 4
-    
