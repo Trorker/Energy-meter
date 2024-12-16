@@ -186,8 +186,13 @@ switch:
     pin:
       number: GPIO13
       inverted: true
-    name: "Relay"
+    #name: "Relay"
     id: relay_control
+    name: "Portone condominiale"
+    icon: "mdi:door-sliding"
+    on_turn_on:
+    - delay: 500ms
+    - switch.turn_off: relay_control
 
 sensor:
 # WI-FI Signal
